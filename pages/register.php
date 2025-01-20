@@ -1,52 +1,58 @@
+<?php
+require_once '../classes/utilisateure.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nom = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $role = $_POST['role']; // Assuming role comes from a form input
+
+    Utilisateur::register($nom, $email, $password, $role);
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="../style/style.css" />
-  </head>
-  <body>
+    <link rel="stylesheet" href="../style/style.css">
+</head>
+<body>
     <div class="center">
-      <h1>Register</h1>
-      <!-- Afficher les messages d'erreur ou de succès -->
-      <?php
-      if (isset($_GET['success'])) {
-          echo "<p style='color: green; text-align: center;'>Registration successful!</p>";
-      }
-      if (isset($_GET['error'])) {
-          echo "<p style='color: red; text-align: center;'>Error: " . htmlspecialchars($_GET['error']) . "</p>";
-      }
-      ?>
-      <!-- Formulaire d'inscription -->
-      <form method="post" action="register_action.php">
-        <div class="txt_field">
-          <input type="text" name="username" required />
-          <span></span>
-          <label>Username</label>
-        </div>
-        <div class="txt_field">
-          <input type="email" name="email" required />
-          <span></span>
-          <label>Email</label>
-        </div>
-        <div class="txt_field">
-          <input type="password" name="password" required />
-          <span></span>
-          <label>Password</label>
-        </div>
-        <!-- Boutons radio pour sélectionner le rôle -->
-        <div class="role_selection" style="margin: 20px 0; text-align: left;">
-          <p style="margin-bottom: 10px;">Select your role:</p>
-          <input type="radio" id="etudiant" name="role" value="etudiant" required />
-          <label for="etudiant">Étudiant</label><br />
-          <input type="radio" id="enseignant" name="role" value="enseignant" />
-          <label for="enseignant">Enseignant</label>
-        </div>
-        <input type="submit" value="Register" />
-        <div class="signup_link">
-          Already a member? <a href="login.php">Login</a>
-        </div>
-      </form>
+        <h1>Register</h1>
+        <form method="post" action="register.php">
+            <div class="txt_field">
+                <input type="text" name="username" required>
+                <span></span>
+                <label>Username</label>
+            </div>
+            <div class="txt_field">
+                <input type="email" name="email" required>
+                <span></span>
+                <label>Email</label>
+            </div>
+            <div class="txt_field">
+                <input type="password" name="password" required>
+                <span></span>
+                <label>Password</label>
+            </div>
+            <div class="role_field">
+                <label>Select Role:</label>
+                <br>
+                <input type="radio" name="role" value="Enseignant" required> Enseignant<br>
+                <input type="radio" name="role" value="Etudiant" required> Etudiant
+            </div>
+            <input type="submit" value="Register">
+     
+            <div class="signup_link">
+            Already a member? <a href="login.php">Login</a>
+            </div>
+        </form>
+        <?php if (isset($_GET['error'])): ?>
+            <p style="color: red;"><?= htmlspecialchars($_GET['error']); ?></p>
+        <?php endif; ?>
     </div>
-  </body>
+</body>
 </html>

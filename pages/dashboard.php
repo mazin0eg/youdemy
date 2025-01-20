@@ -34,16 +34,15 @@ $stats = $admin->consulterStatistiquesGlobales();
                 <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="profile-admin.php"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="tags.php"><i class="fas fa-tag"></i> Tags</a></li>
-                <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
+                <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
             <header class="header">
-                <h1>Welcome Back, User!</h1>
+                <h1>Welcome Back, Admin!</h1>
                 <p>Your dashboard overview is below:</p>
             </header>
 

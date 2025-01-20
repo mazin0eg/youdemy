@@ -166,3 +166,114 @@ body {
     margin-right: 12px;
     font-size: 20px;
 }
+
+
+/* Add Course Form */
+.form-section {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.form-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.add-course-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-course-form label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.add-course-form input, 
+.add-course-form textarea {
+    font-size: 16px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.add-course-form input:focus, 
+.add-course-form textarea:focus {
+    border-color: #2980b9;
+    outline: none;
+}
+
+.add-course-form textarea {
+    resize: none;
+}
+
+.add-course-form input[type="file"] {
+    padding: 5px;
+    border: none;
+}
+
+.submit-button {
+    background-color: #2980b9;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.submit-button:hover {
+    background-color: #216ea0;
+    transform: scale(1.02);
+}
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+}
+
+/* Dropdown Styling */
+.form-select {
+    font-size: 16px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+.form-select:focus {
+    border-color: #2980b9;
+    outline: none;
+}
+
+/* For multiple select styling */
+.form-select[multiple] {
+    height: auto;
+    max-height: 150px;
+    overflow-y: auto;
+}
+

@@ -1,10 +1,10 @@
 <?php
 
 class Database {
-    private $host = 'localhost'; // Database host
-    private $dbname = 'youdemy'; // Database name
-    private $username = 'root'; // Database username
-    private $password = '1234'; // Database password
+    private $host = 'localhost'; 
+    private $dbname = 'youdemy'; 
+    private $username = 'root'; 
+    private $password = '1234'; 
     private $pdo;
 
     public function connect() {

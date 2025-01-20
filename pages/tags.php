@@ -45,8 +45,7 @@ $tags = $admin->afficherTags(); // Fetching tags data
                 <li><a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="profile-admin.php"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="tags.php" class="active"><i class="fas fa-tag"></i> Tags</a></li>
-                <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </aside>
 

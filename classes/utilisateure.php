@@ -1,12 +1,111 @@
-<?php
 
+<?php
+require_once '../db/database.php';
 class Utilisateur {
+    
     protected $id;
     protected $nom;
     protected $email;
     protected $motDePasse;
     protected $role;
 
+    public function __construct($id, $nom, $email, $motDePasse, $role) {
+        $this->id = $id;
+        $this->nom = $nom;
+        $this->email = $email;
+        $this->motDePasse = $motDePasse;
+        $this->role = $role;
+    }
+    public static function login($email, $password) {
+        try {
+            $db = new Database();
+            $conn = $db->connect();
+
+            $stmt = $conn->prepare("SELECT * FROM utilisateurs WHERE email = :email");
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['mot_de_passe'])) {
+                // Start session and store user data
+                session_start();
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['user_name'] = $user['nom'];
+
+                // Redirect based on role
+                switch ($user['role']) {
+                    case 'Admin':
+                        header("Location: dashboard.php");
+                        break;
+                    case 'Enseignant':
+                        header("Location: enseignant-dashboard.php");
+                        break;
+                    case 'Etudiant':
+                        header("Location: etudiant-dashboard.php");
+                        break;
+                    default:
+                        header("Location: login.php?error=Invalid role");
+                        break;
+                }
+                exit;
+            } else {
+                throw new Exception("Invalid email or password");
+            }
+        } catch (Exception $e) {
+            header("Location: login.php?error=" . urlencode($e->getMessage()));
+            exit;
+        }
+    }
+
+    public static function register($nom, $email, $password, $role = 'Visiteur') {
+        try {
+            $db = new Database();
+            $conn = $db->connect();
+
+            // Check if email already exists
+            $stmt = $conn->prepare("SELECT * FROM utilisateurs WHERE email = :email");
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                throw new Exception("Email already exists");
+            }
+
+            // Hash the password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert new user
+            $stmt = $conn->prepare("INSERT INTO utilisateurs (nom, email, mot_de_passe, role) VALUES (:nom, :email, :mot_de_passe, :role)");
+            $stmt->bindParam(':nom', $nom);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':mot_de_passe', $hashedPassword);
+            $stmt->bindParam(':role', $role);
+            $stmt->execute();
+
+            // Redirect to success page or login
+            header("Location: login.php?success=1");
+            exit;
+        } catch (Exception $e) {
+            header("Location: register.php?error=" . urlencode($e->getMessage()));
+            exit;
+        }
+    }
+
+    public static function logout() {
+        // Démarrer ou reprendre la session existante
+        session_start();
+
+        // Supprimer toutes les variables de session
+        session_unset();
+
+        // Détruire la session
+        session_destroy();
+
+        // Rediriger vers la page de login
+        header("Location: login.php");
+        exit;
+    }
     public function getId() {
         return $this->id;
     }
@@ -63,17 +162,112 @@ class Etudiant extends Utilisateur {
 }
 
 class Enseignant extends Utilisateur {
+    private $db;
+
+    public function __construct() {
+        $this->db = (new Database())->connect();
+    }
+
+    // Méthode pour ajouter un cours
     public function ajouterCours($cours) {
-        // Logic to add a course
+        try {
+            // Validate required fields
+            if (empty($cours['titre']) || empty($cours['description']) || empty($cours['enseignant_id'])) {
+                throw new Exception("Les champs 'titre', 'description' et 'enseignant_id' sont obligatoires.");
+            }
+    
+            // Handle optional fields
+            $image = !empty($cours['image']) ? $cours['image'] : null;
+            $tags = !empty($cours['tags']) ? $cours['tags'] : null;
+    
+            // SQL query
+            $query = "INSERT INTO cours (titre, description, image, tags, enseignant_id, date_creation)
+                      VALUES (:titre, :description, :image, :tags, :enseignant_id, NOW())";
+    
+            $stmt = $this->db->prepare($query);
+    
+            // Bind parameters
+            $stmt->bindParam(':titre', $cours['titre']);
+            $stmt->bindParam(':description', $cours['description']);
+            $stmt->bindParam(':image', $image);
+            $stmt->bindParam(':tags', $tags);
+            $stmt->bindParam(':enseignant_id', $cours['enseignant_id'], PDO::PARAM_INT);
+    
+            // Execute the query
+            if ($stmt->execute()) {
+                echo "Cours ajouté avec succès !";
+                return true;
+            } else {
+                throw new Exception("Échec de l'exécution de la requête.");
+            }
+        } catch (PDOException $e) {
+            echo "Erreur PDO lors de l'ajout du cours : " . $e->getMessage();
+        } catch (Exception $e) {
+            echo "Erreur : " . $e->getMessage();
+        }
+    
+        return false;
     }
 
-    public function modifierCours($cours) {
-        // Logic to modify a course
+    public function getTags() {
+    try {
+        $query = "SELECT id, nom FROM tags";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur lors de la récupération des tags : " . $e->getMessage();
+        return [];
     }
+}
 
-    public function supprimerCours($cours) {
-        // Logic to delete a course
+    
+
+public function modifierCours($cours) {
+    try {
+        $query = "UPDATE cours SET titre = :titre, description = :description, image = :image, tags = :tags, video = :video WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindParam(':titre', $cours['titre']);
+        $stmt->bindParam(':description', $cours['description']);
+        $stmt->bindParam(':image', $cours['image']);
+        $stmt->bindParam(':tags', $cours['tags']);
+        $stmt->bindParam(':video', $cours['video']);
+        $stmt->bindParam(':id', $cours['id'], PDO::PARAM_INT);
+
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Erreur lors de la modification du cours : " . $e->getMessage();
+        return false;
     }
+}
+
+public function supprimerCours($courseId) {
+    try {
+        $query = "DELETE FROM cours WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $courseId, PDO::PARAM_INT);
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        echo "Erreur lors de la suppression du cours : " . $e->getMessage();
+        return false;
+    }
+}
+
+public function getCourses($enseignantId) {
+    try {
+        $query = "SELECT * FROM cours WHERE enseignant_id = :enseignant_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':enseignant_id', $enseignantId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Erreur lors de la récupération des cours : " . $e->getMessage();
+        return [];
+    }
+}
+
+
 
     public function consulterStatistiques() {
         // Logic to view statistics
