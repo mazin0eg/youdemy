@@ -17,22 +17,7 @@ $enseignant = new Enseignant();
 $enseignantId = $_SESSION['user_id'];
 $courses = $enseignant->getCourses($enseignantId);
 
-// Gérer l'ajout de cours
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_course'])) {
-    $courseData = [
-        'titre' => $_POST['titre'],
-        'description' => $_POST['description'],
-        'image' => $_POST['image'] ?? null, // Image optionnelle
-        'tags' => $_POST['tags'] ?? null,
-        'enseignant_id' => $enseignantId
-    ];
 
-    if ($enseignant->ajouterCours($courseData)) {
-        $success = "Cours ajouté avec succès.";
-    } else {
-        $error = "Échec de l'ajout du cours.";
-    }
-}
 
 // Gérer la suppression de cours
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_course'])) {

@@ -148,6 +148,31 @@ class Utilisateur {
 }
 
 class Etudiant extends Utilisateur {
+
+   
+        private $db;
+    
+        // Constructeur pour initialiser la connexion à la base de données
+        public function __construct() {
+            // Créer une nouvelle instance de Database et établir la connexion
+            $database = new Database();
+            $this->db = $database->connect();
+        }
+    
+        // Méthode pour récupérer les cours disponibles
+        public function getAvailableCourses() {
+            // La requête SQL pour récupérer les cours disponibles
+            $query = "SELECT cours.id, titre, image, date_creation, tags.nom as tags FROM cours
+            JOIN tags on cours.tags = tags.id"; // Ajuste selon ta structure
+    
+            // Préparer la requête SQL
+            $stmt = $this->db->prepare($query);
+            $stmt->execute(); // Exécuter la requête
+    
+            // Retourner les résultats sous forme de tableau associatif
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    
     public function consulterCatalogue() {
         // Logic to consult course catalog
     }
@@ -195,7 +220,7 @@ class Enseignant extends Utilisateur {
     
             // Execute the query
             if ($stmt->execute()) {
-                echo "Cours ajouté avec succès !";
+               
                 return true;
             } else {
                 throw new Exception("Échec de l'exécution de la requête.");

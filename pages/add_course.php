@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if ($enseignant->ajouterCours($cours)) {
-        echo "Cours ajouté avec succès !";
+        header('Location: my_courses.php');
     } else {
         echo "Erreur lors de l'ajout du cours.";
     }
