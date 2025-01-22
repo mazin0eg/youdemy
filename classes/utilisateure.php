@@ -27,7 +27,7 @@ class Utilisateur {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['mot_de_passe'])) {
-                // Start session and store user data
+                
                 session_start();
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_role'] = $user['role'];
@@ -83,7 +83,7 @@ class Utilisateur {
             $stmt->bindParam(':role', $role);
             $stmt->execute();
 
-            // Redirect to success page or login
+            
             header("Location: login.php?success=1");
             exit;
         } catch (Exception $e) {
@@ -93,16 +93,14 @@ class Utilisateur {
     }
 
     public static function logout() {
-        // Démarrer ou reprendre la session existante
+     
         session_start();
 
-        // Supprimer toutes les variables de session
+       
         session_unset();
 
-        // Détruire la session
         session_destroy();
 
-        // Rediriger vers la page de login
         header("Location: login.php");
         exit;
     }
@@ -152,38 +150,35 @@ class Etudiant extends Utilisateur {
    
         private $db;
     
-        // Constructeur pour initialiser la connexion à la base de données
         public function __construct() {
-            // Créer une nouvelle instance de Database et établir la connexion
             $database = new Database();
             $this->db = $database->connect();
         }
     
-        // Méthode pour récupérer les cours disponibles
         public function getAvailableCourses() {
-            // La requête SQL pour récupérer les cours disponibles
             $query = "SELECT cours.id, titre, image, date_creation, tags.nom as tags FROM cours
-            JOIN tags on cours.tags = tags.id"; // Ajuste selon ta structure
+            JOIN tags on cours.tags = tags.id"; 
     
-            // Préparer la requête SQL
             $stmt = $this->db->prepare($query);
-            $stmt->execute(); // Exécuter la requête
+            $stmt->execute();
     
-            // Retourner les résultats sous forme de tableau associatif
+         
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     
-    public function consulterCatalogue() {
-        // Logic to consult course catalog
-    }
-
-    public function sInscrireCours($cours) {
-        // Logic to enroll in a course
-    }
-
-    public function voirMesCours() {
-        // Logic to view enrolled courses
-    }
+        public function inscrireCours($etudiantId, $coursId) {
+            try {
+                $query = "INSERT INTO inscriptions (etudiant_id, cours_id) VALUES (:etudiant_id, :cours_id)";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':etudiant_id', $etudiantId, PDO::PARAM_INT);
+                $stmt->bindParam(':cours_id', $coursId, PDO::PARAM_INT);
+    
+                return $stmt->execute();
+            } catch (PDOException $e) {
+                echo "Erreur lors de l'inscription au cours : " . $e->getMessage();
+                return false;
+            }
+        }
 }
 
 class Enseignant extends Utilisateur {
@@ -196,31 +191,33 @@ class Enseignant extends Utilisateur {
     // Méthode pour ajouter un cours
     public function ajouterCours($cours) {
         try {
-            // Validate required fields
-            if (empty($cours['titre']) || empty($cours['description']) || empty($cours['enseignant_id'])) {
-                throw new Exception("Les champs 'titre', 'description' et 'enseignant_id' sont obligatoires.");
-            }
+            // Vérifier les champs obligatoires
+            // if (empty($cours['titre']) || empty($cours['description']) || empty($cours['enseignant_id'])) {
+            //     throw new Exception("Les champs 'titre', 'description' et 'enseignant_id' sont obligatoires.");
+            // }
     
-            // Handle optional fields
-            $image = !empty($cours['image']) ? $cours['image'] : null;
-            $tags = !empty($cours['tags']) ? $cours['tags'] : null;
+            // // Gérer les champs optionnels
+            // $image = !empty($cours['image']) ? $cours['image'] : null;
+            // $tags = !empty($cours['tags']) ? $cours['tags'] : null;
+            // $video = !empty($cours['video']) ? $cours['video'] : null;
     
-            // SQL query
-            $query = "INSERT INTO cours (titre, description, image, tags, enseignant_id, date_creation)
-                      VALUES (:titre, :description, :image, :tags, :enseignant_id, NOW())";
+            // Requête SQL
+            $query = "INSERT INTO cours (titre, description, image, tags, video, enseignant_id, date_creation)
+                      VALUES (:titre, :description, :image, :tags, :video, :enseignant_id, NOW())";
     
             $stmt = $this->db->prepare($query);
     
-            // Bind parameters
+            // Lier les paramètres
             $stmt->bindParam(':titre', $cours['titre']);
             $stmt->bindParam(':description', $cours['description']);
             $stmt->bindParam(':image', $image);
             $stmt->bindParam(':tags', $tags);
+            $stmt->bindParam(':video', $video);
             $stmt->bindParam(':enseignant_id', $cours['enseignant_id'], PDO::PARAM_INT);
     
-            // Execute the query
+            // Exécuter la requête
             if ($stmt->execute()) {
-               
+                echo "Cours ajouté avec succès avec vidéo !";
                 return true;
             } else {
                 throw new Exception("Échec de l'exécution de la requête.");
@@ -233,6 +230,7 @@ class Enseignant extends Utilisateur {
     
         return false;
     }
+    
 
     public function getTags() {
     try {

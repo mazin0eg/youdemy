@@ -193,7 +193,7 @@ $courses = $student->getAvailableCourses(); // méthode fictive pour récupérer
                         <div class="p-6">
                             <!-- Affichage de la catégorie -->
                             <span class="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full"><?= htmlspecialchars($course['tags']) ?></span>
-                            <a href="pages/courses/courseDetails.php?id=<?= urlencode($course['id']) ?>" class="block">
+                            <a href="courseDetails.php?id=<?= urlencode($course['id']) ?>" class="block">
                                 <!-- Titre du cours -->
                                 <h3 class="text-lg font-semibold text-gray-900 my-3 hover:text-orange-600 transition-colors duration-300 break-words line-clamp-2">
                                     <?= htmlspecialchars($course['titre']) ?>
@@ -226,7 +226,7 @@ $courses = $student->getAvailableCourses(); // méthode fictive pour récupérer
             <?php endif; ?>
         </div>
         <div class="text-center mt-12">
-            <a href="pages/courses/courses.php" class="inline-block bg-gray-900 text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transform hover:-translate-y-0.5 transition">
+            <a href="pages/courseDetails.php" class="inline-block bg-gray-900 text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transform hover:-translate-y-0.5 transition">
                 Voir tous les cours
             </a>
         </div>
