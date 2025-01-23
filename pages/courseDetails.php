@@ -86,11 +86,12 @@ if (isset($_GET['id'])) {
 
             <!-- Inscription Button -->
             <form method="POST" action="inscrire.php">
-                <input type="hidden" name="id_cours" value="<?= $idCours ?>">
-                <button type="submit" class="bg-blue-600 text-white py-3 px-6 rounded-lg text-sm font-medium hover:bg-blue-700">
-                    S'inscrire
-                </button>
-            </form>
+    <input type="hidden" name="id_cours" value="<?= $idCours ?>">
+    <button type="submit" class="bg-blue-600 text-white py-3 px-6 rounded-lg text-sm font-medium hover:bg-blue-700">
+        S'inscrire
+    </button>
+</form>
+
         </div>
 
         <!-- Back Button -->

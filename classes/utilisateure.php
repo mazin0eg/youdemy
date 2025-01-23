@@ -168,17 +168,50 @@ class Etudiant extends Utilisateur {
     
         public function inscrireCours($etudiantId, $coursId) {
             try {
+                // Vérifier si l'étudiant est déjà inscrit au cours
+                $checkQuery = "SELECT COUNT(*) FROM inscriptions WHERE etudiant_id = :etudiant_id AND cours_id = :cours_id";
+                $checkStmt = $this->db->prepare($checkQuery);
+                $checkStmt->bindParam(':etudiant_id', $etudiantId, PDO::PARAM_INT);
+                $checkStmt->bindParam(':cours_id', $coursId, PDO::PARAM_INT);
+                $checkStmt->execute();
+        
+                if ($checkStmt->fetchColumn() > 0) {
+                    // Déjà inscrit
+                    return false;
+                }
+        
+                // Inscription
                 $query = "INSERT INTO inscriptions (etudiant_id, cours_id) VALUES (:etudiant_id, :cours_id)";
                 $stmt = $this->db->prepare($query);
                 $stmt->bindParam(':etudiant_id', $etudiantId, PDO::PARAM_INT);
                 $stmt->bindParam(':cours_id', $coursId, PDO::PARAM_INT);
-    
+        
                 return $stmt->execute();
             } catch (PDOException $e) {
                 echo "Erreur lors de l'inscription au cours : " . $e->getMessage();
                 return false;
             }
         }
+        public function getCoursInscrits($etudiantId) {
+            try {
+                $query = "
+                    SELECT cours.id, cours.titre, cours.description, cours.image 
+                    FROM inscriptions
+                    JOIN cours ON inscriptions.cours_id = cours.id
+                    WHERE inscriptions.etudiant_id = :etudiant_id
+                ";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':etudiant_id', $etudiantId, PDO::PARAM_INT);
+                $stmt->execute();
+        
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                echo "Erreur lors de la récupération des cours inscrits : " . $e->getMessage();
+                return [];
+            }
+        }
+        
+        
 }
 
 class Enseignant extends Utilisateur {

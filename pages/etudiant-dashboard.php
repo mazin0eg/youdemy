@@ -164,7 +164,7 @@ $courses = $student->getAvailableCourses(); // méthode fictive pour récupérer
             </div>
             <ul class="sidebar-menu">
                 <li><a href="student-dashboard.php"><i class="fas fa-home"></i> Tableau de bord</a></li>
-                <li><a href="my_courses.php"><i class="fas fa-book"></i> Mes Cours</a></li>
+                <li><a href="mes-cours.php"><i class="fas fa-book"></i> Mes Cours</a></li>
                 <li><a href="#progress"><i class="fas fa-chart-line"></i> Mes Progrès</a></li>
                 <li><a href="#settings"><i class="fas fa-cogs"></i> Paramètres</a></li>
                 <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
